@@ -1,2 +1,2 @@
-# gta
+# GTA
 Research on model generation
