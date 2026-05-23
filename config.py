@@ -21,122 +21,27 @@ def add_general_group(group):
 def add_data_group(group):
     group.add_argument("--data_path", type=str, help="path to model dict", default="./data/model_info.json")
     group.add_argument("--num_cpu", type=int, default=-1, help="number of cpus to use for parallel processing (-1 to use all available cores)")
-    group.add_argument("--do_crawl", action="store_true", help="crawl the raw data")
-    group.add_argument(
-        "--graph_sampling", action="store_true", help="crawl the raw data"
-    )
-    group.add_argument(
-        "--do_process_raw", action="store_true", help="process the raw data"
-    )
-    group.add_argument(
-        "--feat_model",
-        type=str,
-        help="model to extract node features",
-        default="Salesforce/codet5p-110m-embedding",
-    )
-    group.add_argument(
-        "--baseline_prompt",
-        type=str,
-        help="baseline of input prompts",
-        default="code",
-    )
-    group.add_argument(
-        "--raw_overwrite", action="store_true", help="overwrite the raw data"
-    )
-    group.add_argument("--data_fuzz", action="store_true", help="using fuzz data")
-    group.add_argument(
-        "--repo",
-        type=str,
-        help="repo to use for training",
-        default=None,
-    )
-    group.add_argument(
-        "--old_data_path", type=str, help="path to old data for graph sampling"
-    )
-    group.add_argument("--get_reason", action="store_true", help="get reason from llm")
-    group.add_argument(
-        "--reason_model", type=str, help="model to get reason", default=None
-    )
-    group.add_argument(
-        "--reason_api_key", type=str, help="api key for reason model", default=None
-    )
-    group.add_argument(
-        "--prefetch_data",
-        action="store_true",
-        help="prefetch all data into memory for faster loading",
-    )
-    group.add_argument(
-        "--data_cache_size",
-        type=int,
-        default=128,
-        help="LRU cache size for data loading",
-    )
-    # group.add_argument(
-    #     "--redo_graph", action="store_true", help="recreate the graph data"
-    # )
-
-
-def add_joern_group(group):
-    group.add_argument(
-        "--joern_port", type=str, help="port of joern server", default="8080"
-    )
-    group.add_argument(
-        "--joern_path",
-        type=str,
-        help="path to joern",
-        default="./graph/joern/",
-    )
 
 
 def add_model_group(group):
 
     group.add_argument(
-        "--gnn_mode",
+        "--grad_transformer_model",
         type=str,
-        help="mode of the program: node, graph",
-        default="node",
+        help="Pretrained model to use for the gradient transformer",
+        default="google/flan-t5-large",
     )
     group.add_argument(
-        "--gnn_type",
+        "--projection_model",
         type=str,
-        help="type of gnn: gat, graphsage",
-        default="gat",
+        help="Pretrained model to use for the projection of the input features",
+        default="microsoft/resnet-18",
     )
     group.add_argument(
-        "--model_name",
-        type=str,
-        help="name of the LLM",
-        default="qwen2_5-1_5b",
-    )
-    group.add_argument(
-        "--llm_model_name",
-        type=str,
-        help="name of the LLM",
-        default="qwen2_5-1_5b",
-    )
-    group.add_argument(
-        "--in_feats",
+        "--input_dimension",
         type=int,
-        help="number of input features",
-        default=772,
-    )
-    group.add_argument(
-        "--n_hidden",
-        type=int,
-        help="number of hidden features",
-        default=64,
-    )
-    group.add_argument(
-        "--n_layers",
-        type=int,
-        help="number of layers",
-        default=3,
-    )
-    group.add_argument(
-        "--num_head",
-        type=int,
-        help="number of heads",
-        default=8,
+        help="the length and width of the input that we will pad the input features to",
+        default=2048,
     )
     group.add_argument(
         "--dropout",
@@ -145,62 +50,10 @@ def add_model_group(group):
         default=0.2,
     )
     group.add_argument(
-        "--lora_r",
-        type=int,
-        help="lora rank",
-        default=4,
-    )
-    group.add_argument(
-        "--lora_alpha",
-        type=int,
-        help="lora alpha",
-        default=32,
-    )
-    group.add_argument(
-        "--lora_dropout",
-        type=float,
-        help="lora dropout",
-        default=0.1,
-    )
-    group.add_argument(
-        "--lora_target_modules",
-        type=str,
-        help="lora target modules",
-        default=None,
-    )
-    group.add_argument(
-        "--load_in_4bit",
-        action="store_true",
-        help="load model in 4-bit quantization (QLoRA)",
-    )
-    group.add_argument(
-        "--load_in_8bit",
-        action="store_true",
-        help="load model in 8-bit quantization",
-    )
-    group.add_argument(
-        "--bnb_4bit_compute_dtype",
-        type=str,
-        help="compute dtype for 4-bit quantization (bfloat16, float16, float32)",
-        default="bfloat16",
-    )
-    group.add_argument(
-        "--bnb_4bit_quant_type",
-        type=str,
-        help="quantization type for 4-bit (nf4 or fp4)",
-        default="nf4",
-    )
-    group.add_argument(
         "--max_num_checkpoint",
         type=int,
         help="maximum number of checkpoints",
         default=5,
-    )
-    group.add_argument(
-        "--model_weight_path", type=str, help="path to the model weight", default=None
-    )
-    group.add_argument(
-        "--checkpoint_path", type=str, help="path to the checkpoint", default=None
     )
     group.add_argument(
         "--continue_training",
@@ -208,93 +61,20 @@ def add_model_group(group):
         help="continue training from checkpoint",
     )
     group.add_argument(
-        "--test_on_train",
-        action="store_true",
-        help="test on train dataset",
-    )
-    group.add_argument(
-        "--fuzz_model",
-        action="store_true",
-        help="using fuzz model",
-    )
-    group.add_argument(
-        "--fuzzing",
-        action="store_true",
-        help="Start fuzzing process",
-    )
-    group.add_argument(
         "--num_samples_per_input",
         type=int,
-        help="number of samples to fuzz per input",
+        help="number of samples to sample for each input by adding gaussian noise to the model weights",
         default=10,
-    )
-    group.add_argument(
-        "--start_fuzz_layer_index",
-        type=int,
-        help="start layer index for fuzzing",
-        default=0,
-    )
-    group.add_argument(
-        "--end_fuzz_layer_index",
-        type=int,
-        help="end layer index for fuzzing",
-        default=0,
-    )
-    group.add_argument(
-        "--kl_g_reg",
-        type=float,
-        help="kl regularization for gaussian",
-        default=0.001,
-    )
-    group.add_argument(
-        "--kl_d_reg",
-        type=float,
-        help="kl regularization for dirichlet",
-        default=0.001,
-    )
-    group.add_argument(
-        "--ring_attn",
-        action="store_true",
-        help="use ring attention",
     )
 
 
 def add_training_group(group):
-    group.add_argument(
-        "--llm_model",
-        type=str,
-        help="llm model to generate test cases",
-        default="Qwen/CodeQwen1.5-7B-Chat",
-    )
+
     group.add_argument(
         "--max_seq_length",
         type=int,
         help="max sequence length",
-        default=12000,
-    )
-    group.add_argument(
-        "--min_seq_length",
-        type=int,
-        help="max sequence length",
-        default=0,
-    )
-    group.add_argument(
-        "--temp",
-        type=float,
-        help="temperature",
-        default=0.01,
-    )
-    group.add_argument(
-        "--top_k",
-        type=int,
-        help="top_k for text generation",
-        default=50,
-    )
-    group.add_argument(
-        "--top_p",
-        type=float,
-        help="top_p for text generation",
-        default=0.95,
+        default=512,
     )
     group.add_argument(
         "--batch_size",
@@ -320,89 +100,6 @@ def add_training_group(group):
         default="configs/deepspeed_zero2.json",
     )
     group.add_argument(
-        "--use_deepspeed_inference",
-        action="store_true",
-        help="use DeepSpeed for inference with tensor parallelism (reduces memory usage and speeds up inference)",
-    )
-    group.add_argument(
-        "--deepspeed_inference_config",
-        type=str,
-        help="path to DeepSpeed inference config file",
-        default="configs/deepspeed_inference.json",
-    )
-    group.add_argument(
-        "--tensor_parallel_size",
-        type=int,
-        help="number of GPUs for tensor parallelism during inference",
-        default=2,
-    )
-    group.add_argument(
-        "--num_gpu",
-        type=int,
-        help="number of gpus",
-        default=1,
-    )
-    group.add_argument(
-        "--output_dir",
-        type=str,
-        default="./results/",
-        help="output directory to save model",
-    )
-    group.add_argument(
-        "--log_dir",
-        default="./logs/",
-        type=str,
-        help="output directory to save model",
-    )
-    group.add_argument(
-        "--gen_dir",
-        default="./results/generated/",
-        type=str,
-        help="output directory to save model",
-    )
-    group.add_argument(
-        "--gen_file_path",
-        default="None",
-        type=str,
-        help="output file",
-    )
-    group.add_argument(
-        "--model_dir",
-        default=None,
-        type=str,
-        help="Model directory of the testing model",
-    )
-    group.add_argument(
-        "--overwrite_output_dir",
-        action="store_true",
-        help="overwrite output directory",
-    )
-    group.add_argument(
-        "--do_train",
-        action="store_true",
-        help="train the model",
-    )
-    group.add_argument(
-        "--do_test",
-        action="store_true",
-        help="train the model",
-    )
-    group.add_argument(
-        "--do_eval",
-        action="store_true",
-        help="evaluate the model",
-    )
-    group.add_argument(
-        "--do_predict",
-        action="store_true",
-        help="predict the model",
-    )
-    group.add_argument(
-        "--use_lora",
-        action="store_true",
-        help="train the model",
-    )
-    group.add_argument(
         "--learning_rate",
         type=float,
         help="learning rate",
@@ -413,12 +110,6 @@ def add_training_group(group):
         type=float,
         help="rope theta",
         default=500000.0,
-    )
-    group.add_argument(
-        "--max_new_tokens",
-        type=int,
-        help="max new tokens to generate",
-        default=512,
     )
     group.add_argument(
         "--max_grad_norm",
@@ -461,144 +152,24 @@ def add_training_group(group):
         help="number of steps to validate",
         default=200,
     )
-    group.add_argument(
-        "--run_name",
-        type=str,
-        help="name of the run for wandb",
-        default="testing",
-    )
-    group.add_argument(
-        "--use_accelerate",
-        action="store_true",
-        help="Train with accelerate",
-    )
-    group.add_argument(
-        "--only_nvib",
-        action="store_true",
-        help="Train only the NVIB layers",
-    )
-    group.add_argument(
-        "--only_gnn",
-        action="store_true",
-        help="Train only the GNN layers",
-    )
-    group.add_argument(
-        "--train_reasoning",
-        action="store_true",
-        help="Train with reasoning",
-    )
 
 
-def add_testgen_group(group):
+def add_testing_group(group):
 
     group.add_argument(
-        "--module_path",
+        "--model_path",
         type=str,
         help="path to the module to generate test cases",
         default=None,
     )
     group.add_argument(
-        "--do_generate",
-        action="store_true",
-        help="generate test cases for the model",
+        "--max_new_tokens",
+        type=int,
+        default=512,
+        help="maximum number of tokens to generate",
     )
-    group.add_argument(
-        "--verifier_model",
-        type=str,
-        help="model to verify the test cases",
-        default=None,
-    )
-    group.add_argument(
-        "--verifier_api_key",
-        type=str,
-        help="api key for the verifier model",
-        default=None,
-    )
-    group.add_argument("--branch_limit", type=int, help="branch limit", default=10000)
-
-
-def add_baseline_group(group):
-    group.add_argument(
-        "--baseline_type",
-        type=str,
-        help="type of baseline to use",
-        default="prompt_engineer",
-    )
-    group.add_argument(
-        "--baseline_on_testgen",
-        action="store_true",
-        help="use baseline on test case generation",
-    )
-    group.add_argument(
-        "--baseline_llm_model", type=str, help="baseline llm model", default=None
-    )
-    group.add_argument(
-        "--baseline_api_key",
-        type=str,
-        help="api key for the baseline llm model",
-        default=None,
-    )
-    group.add_argument(
-        "--baseline_ragemb_api_key",
-        type=str,
-        help="api key for the embedding of rag module",
-        default=None,
-    )
-    group.add_argument(
-        "--baseline_output_path",
-        type=str,
-        help="path to save baseline outputs",
-        default=None,
-    )
-    group.add_argument(
-        "--baseline_sif_path",
-        type=str,
-        help="path to jif file for baseline generation",
-        default=None,
-    )
-    group.add_argument(
-        "--baseline_output_name",
-        type=str,
-        help="file path for baseline generation",
-        default=None,
-    )
-    group.add_argument(
-        "--baseline_prompt_type",
-        type=str,
-        help="type of prompt to use",
-        default="zero_shot",
-    )
-    group.add_argument(
-        "--baseline_temp", type=float, help="temperature for baseline", default=0.01
-    )
-    group.add_argument(
-        "--baseline_max_tokens", type=int, help="max tokens for baseline", default=512
-    )
-    group.add_argument(
-        "--baseline_tmp_dir",
-        type=str,
-        help="temp dir for baseline",
-        default="./results/temp",
-    )
-    group.add_argument(
-        "--baseline_skip_prepare_data",
-        action="store_true",
-        help="skip data preparation for baseline",
-    )
-    group.add_argument(
-        "--baseline_branch_data",
-        type=str,
-        help="Dir for branches of generated test cases for baseline",
-        default=None,
-    )
-    group.add_argument(
-        "--baseline_response_data",
-        type=str,
-        help="Dir for generated test case responses for baseline",
-        default=None,
-    )
-
-
+    
+    
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -612,20 +183,16 @@ def parse_args():
 
     general_group = parser.add_argument_group(title="General configuration")
     data_group = parser.add_argument_group(title="Data-related configuration")
-    joern_group = parser.add_argument_group(title="Joern-related configuration")
     training_group = parser.add_argument_group(title="Training-related configuration")
     model_group = parser.add_argument_group(title="Model-related configuration")
     testgen_group = parser.add_argument_group(
         title="Test-case generation configuration"
     )
-    baseline_group = parser.add_argument_group(title="Baseline configuration")
 
-    add_joern_group(joern_group)
     add_data_group(data_group)
     add_general_group(general_group)
     add_training_group(training_group)
     add_model_group(model_group)
-    add_testgen_group(testgen_group)
-    add_baseline_group(baseline_group)
+    add_testing_group(testgen_group)
 
     return parser.parse_args()
