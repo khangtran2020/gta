@@ -19,8 +19,18 @@ def add_general_group(group):
 
 
 def add_data_group(group):
-    group.add_argument("--data_path", type=str, help="path to model dict", default="./data/model_info.json")
-    group.add_argument("--num_cpu", type=int, default=-1, help="number of cpus to use for parallel processing (-1 to use all available cores)")
+    group.add_argument(
+        "--data_path",
+        type=str,
+        help="path to model dict",
+        default="./data/model_info.json",
+    )
+    group.add_argument(
+        "--num_cpu",
+        type=int,
+        default=-1,
+        help="number of cpus to use for parallel processing (-1 to use all available cores)",
+    )
 
 
 def add_model_group(group):
@@ -168,8 +178,8 @@ def add_testing_group(group):
         default=512,
         help="maximum number of tokens to generate",
     )
-    
-    
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
 
